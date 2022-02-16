@@ -67,7 +67,7 @@ struct Values                                  //4
 {
     T* compare(T* a, T* b) //5
     {
-        if(a != nullptr || b != nullptr)
+        if(a != nullptr && b != nullptr)
         {
             if( a->value < b->value ) return a;
             if( a->value > b->value ) return b;
@@ -105,9 +105,15 @@ struct MultiplyValues
 {
     static float updateU(U* that, float* newVal)         //10
     {
+        if(that == nullptr || newVal == nullptr)
+        {
+            std::cout << "Warning: function arguments are nullptr" << std::endl;
+            return 0.0f;
+        }
         std::cout << "U's unit1 value: " << that->unit1 << std::endl;
         that->unit1 = *newVal;
         std::cout << "U's unit1 updated value: " << that->unit1 << std::endl;
+
         while( std::abs(that->unit2 - that->unit1) > 0.001f )
         {
             /*
@@ -153,7 +159,7 @@ int main()
     if(smaller != nullptr)
         std::cout << "the smaller one is << " << smaller->name << std::endl; //9
     else
-        std::cout << "Warning: smaller pointer is nullptr" << std::endl; //9
+        std::cout << "Warning: smaller is pointing to a nullptr returning from f.compare(). This function might be trying to use invalid pointers as function parameters" << std::endl; //9
     
     U u1;
     float updatedValue = 1.2f;
