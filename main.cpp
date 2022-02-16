@@ -159,7 +159,7 @@ int main()
     if(smaller != nullptr)
         std::cout << "the smaller one is << " << smaller->name << std::endl; //9
     else
-        std::cout << "Warning: smaller is pointing to a nullptr returning from f.compare(). This function might be trying to use invalid pointers as function parameters" << std::endl; //9
+        std::cout << "Warning: smaller is pointing to a nullptr returning from f.compare(). This function might be trying to use invalid pointers as function parameters or the values happen to be equal" << std::endl; //9
     
     U u1;
     float updatedValue = 1.2f;
