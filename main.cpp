@@ -36,13 +36,11 @@ struct T
 
 struct Values                                  //4
 {
-    T* compare(T* a, T* b) //5
+    const T* compare(const T& a, const T& b) //5
     {
-        if(a != nullptr && b != nullptr)
-        {
-            if( a->value < b->value ) return a;
-            if( a->value > b->value ) return b;
-        }
+        if( a.value < b.value ) return &a;
+        if( a.value > b.value ) return &b;
+        
         return nullptr;
     }
 };
@@ -50,59 +48,49 @@ struct Values                                  //4
 struct U
 {
     float unit1 { 0.0f }, unit2 { 0.0f };
-    float updateU(float* newVal)     //12
+    float updateU(const float& newVal)     //12 
     {
-        if( newVal != nullptr)
+        std::cout << "U's unit1 value: " << this->unit1 << std::endl;
+        this->unit1 = newVal;
+        std::cout << "U's unit1 updated value: " << this->unit1 << std::endl;
+        while( std::abs(this->unit2 - this->unit1) > 0.001f )
         {
-            std::cout << "U's unit1 value: " << this->unit1 << std::endl;
-            this->unit1 = *newVal;
-            std::cout << "U's unit1 updated value: " << this->unit1 << std::endl;
-            while( std::abs(this->unit2 - this->unit1) > 0.001f )
-            {
-                if(this->unit2 < this->unit1)
-                    this->unit2 += 0.1f;
-                else
-                    this->unit2 -= 0.1f;
-            }
-            std::cout << "U's unit2 updated value: " << this->unit2 << std::endl;
-            return this->unit2 * this->unit1;
+            if(this->unit2 < this->unit1)
+                this->unit2 += 0.1f;
+            else
+                this->unit2 -= 0.1f;
         }
-        std::cout << "Warning: float newVal is nullptr!" << std::endl;
-        return 0.0f;
+        std::cout << "U's unit2 updated value: " << this->unit2 << std::endl;
+        return this->unit2 * this->unit1;
     }
 };
 
 struct MultiplyValues
 {
-    static float updateU(U* that, float* newVal)         //10
+    static float updateU(U& that, const float& newVal)         //10 
     {
-        if(that == nullptr || newVal == nullptr)
-        {
-            std::cout << "Warning: function arguments are nullptr" << std::endl;
-            return 0.0f;
-        }
-        std::cout << "U's unit1 value: " << that->unit1 << std::endl;
-        that->unit1 = *newVal;
-        std::cout << "U's unit1 updated value: " << that->unit1 << std::endl;
+        std::cout << "U's unit1 value: " << that.unit1 << std::endl;
+        that.unit1 = newVal;
+        std::cout << "U's unit1 updated value: " << that.unit1 << std::endl;
 
-        while( std::abs(that->unit2 - that->unit1) > 0.001f )
+        while( std::abs(that.unit2 - that.unit1) > 0.001f )
         {
             /*
              write something that makes the distance between that->unit2 and that->unit1 get smaller
              */
-            if (that->unit2 < that->unit1)
+            if (that.unit2 < that.unit1)
             {
-                that->unit2 += 0.1f;
-                std::cout << "unit2: " << that->unit2 << std::endl;
+                that.unit2 += 0.1f;
+                std::cout << "unit2: " << that.unit2 << std::endl;
             }
             else
             {
-                that->unit2 -= 0.1f;
-                std::cout << "unit2: " << that->unit2 << std::endl;
+                that.unit2 -= 0.1f;
+                std::cout << "unit2: " << that.unit2 << std::endl;
             }
         }
-        std::cout << "U's unit2 updated value: " << that->unit2 << std::endl;
-        return that->unit2 * that->unit1;
+        std::cout << "U's unit2 updated value: " << that.unit2 << std::endl;
+        return that.unit2 * that.unit1;
     }
 };
         
@@ -126,16 +114,16 @@ int main()
     T typeB( 2, "typeB");                                             //6
     
     Values f;                                            //7
-    auto* smaller = f.compare(&typeA, &typeB);                              //8
+    auto* smaller = f.compare(typeA, typeB);                              //8
     if(smaller != nullptr)
         std::cout << "the smaller one is << " << smaller->name << std::endl; //9
     else
-        std::cout << "Warning: smaller is pointing to a nullptr returning from f.compare(). This function might be trying to use invalid pointers as function parameters or the values happen to be equal" << std::endl; //9
+        std::cout << "f.compare() returns nullptr because the values are equal" << std::endl; //9
     
     U u1;
     float updatedValue = 1.2f;
-    std::cout << "[static func] u1's multiplied values: " << MultiplyValues::updateU(&u1, &updatedValue) << std::endl;  //11
+    std::cout << "[static func] u1's multiplied values: " << MultiplyValues::updateU(u1, updatedValue) << std::endl;  //11
     
     U u2;
-    std::cout << "[member func] u2's multiplied values: " << u2.updateU( &updatedValue ) << std::endl;
+    std::cout << "[member func] u2's multiplied values: " << u2.updateU( updatedValue ) << std::endl;
 }
